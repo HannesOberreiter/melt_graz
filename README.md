@@ -34,7 +34,7 @@ MY_GIT_EMAIL=""
 
 ```bash
 docker run --rm \
-    -e "PASSWORD=graz" \
+    -e ROOT=TRUE \
     -v "${RENV_PATHS_CACHE_HOST}:/home/rstudio/.local/share/renv/cache" \
     -v "${DOCKER_LOKAL_FILES}:/home/rstudio/lokal" \
     -e "GIT_EMAIL=${MY_GIT_EMAIL}" \
