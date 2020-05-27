@@ -1,6 +1,6 @@
 FROM rocker/tidyverse:4.0.0
 
-LABEL maintainer= 'hoberreiter@gmail.com'
+LABEL maintainer="hoberreiter@gmail.com"
 
 COPY git_config.sh /etc/cont-init.d/gitconfig
 COPY . /home/rstudio/project
