@@ -23,8 +23,6 @@ renv:::renv_paths_cache()
 
 Find your local renv cache with `renv:::renv_paths_cache()`. The globals `DOCKER_LOKAL_FILES`, `MY_GIT_USER`, `MY_GIT_EMAIL` are all optional and can be left empty.
 
-docker run -d -p 8787:8787 -e USER=yourName -e PASSWORD=secretPassword -e ROOT=TRUE -e GIT_USER="gitUsername" -e GIT_EMAIL="yourEmail@gmail.com" -e THEME="Solarized Dark"  rocker/tidyverse:3.4.3
-
 ```bash
 RENV_PATHS_CACHE_HOST="/Users/virus-on-mac/Library/Application Support/renv/cache"
 DOCKER_LOKAL_FILES="/Users/virus-on-mac/Reserve/Repos/hrm_graz"
