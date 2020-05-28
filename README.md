@@ -26,7 +26,7 @@ docker run --rm \
     -e "GIT_EMAIL=${MY_GIT_EMAIL}" \
     -e "GIT_USER=${MY_GIT_USER}" \
     -p 8787:8787 \
-    melt_graz
+    hannesoberreiter/melt_graz
 ```
 
 ## MIT Licence

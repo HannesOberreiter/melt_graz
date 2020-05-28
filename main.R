@@ -69,12 +69,17 @@ V.TEMP      <- rep(1, ncol(D.RAW.FRAME)-1)
 V.SAMPLES   <- c(2:ncol(D.RAW))
 
 # Calc and Visualize
+par(mfrow=c(4,8),oma=c(2,2,0,2))
+
 L.MELT <- meltcurve(
   D.RAW.FRAME, 
   cut.Area = c(0.2),
   window = V.WINDOW,
   temps = c(V.TEMP), 
   fluos = c(V.SAMPLES), norm = TRUE, calc.Area = TRUE)
+mtext("Temperature [C°]",side=1,line=0,outer=TRUE,cex=1)
+mtext("RFU",side=2,line=0,outer=TRUE,cex=1.3,las=0)
+mtext("-dF/dT",side=4,line=0,outer=TRUE,cex=1.3,las=0)
 dev.off()
 
 # check if all peaks have good quality, otherweise we need to play with the cut.Area
