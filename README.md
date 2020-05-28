@@ -32,3 +32,8 @@ docker run --rm \
 ## MIT Licence
 
 Copyright (c) 2020 Hannes Oberreiter
+
+## Publications
+
+[![DOI](https://zenodo.org/badge/265545926.svg)](https://zenodo.org/badge/latestdoi/265545926)
+
