@@ -9,7 +9,7 @@ D.RAW   <- read_csv2("data/raw.csv",   trim_ws = TRUE)
 D.TAXON <- read_csv2("data/taxon.csv", trim_ws = TRUE)
 
 # 3. Definitions ####
-V.SAVE <- c("~/lokal/output/") # Save Path for Outputs
+V.SAVE <- c("~/lokal/output/") # Save Path for Outputs, you can change this to your connected folder
 V.WINDOW <- c(75,85) # Define a melting window, it should include all our melting curves
 D.RAW <- D.RAW[D.RAW$temp >= V.WINDOW[1] & D.RAW$temp <= V.WINDOW[2],]
 V.TAXON <- unique(D.TAXON$taxon)
@@ -41,6 +41,7 @@ D.SUM <- D.LONG %>% group_by(taxon, temp) %>% summarize(
   lowersd = mean(rescaled)-sd(rescaled)
 )
 
+# we set manual hard limit, because we don't want impossible sd
 D.SUM$uppersd[D.SUM$uppersd > 1] <- 1
 D.SUM$lowersd[D.SUM$lowersd < 0] <- 0
 
@@ -68,18 +69,19 @@ D.RAW.FRAME <- data.frame(D.RAW)
 V.TEMP      <- rep(1, ncol(D.RAW.FRAME)-1)
 V.SAMPLES   <- c(2:ncol(D.RAW))
 
-# Calc and Visualize
-par(mfrow=c(4,8),oma=c(2,2,0,2))
+# Calc and Visualize, add margin border for axis labels
+par(mfrow = c(4,8), oma = c(2,2,0,2))
 
 L.MELT <- meltcurve(
   D.RAW.FRAME, 
   cut.Area = c(0.2),
-  window = V.WINDOW,
-  temps = c(V.TEMP), 
-  fluos = c(V.SAMPLES), norm = TRUE, calc.Area = TRUE)
-mtext("Temperature [C°]",side=1,line=0,outer=TRUE,cex=1)
-mtext("RFU",side=2,line=0,outer=TRUE,cex=1.3,las=0)
-mtext("-dF/dT",side=4,line=0,outer=TRUE,cex=1.3,las=0)
+  window   = V.WINDOW,
+  temps    = c(V.TEMP), 
+  fluos    = c(V.SAMPLES), norm = TRUE, calc.Area = TRUE
+  )
+mtext("Temperature [C°]", side = 1, line = 0, outer = TRUE, cex = 1) # x-axis
+mtext("RFU",    side = 2, line = 0, outer = TRUE, cex = 1.3, las = 0) # primary y-axis
+mtext("-dF/dT", side = 4, line = 0, outer = TRUE, cex = 1.3, las = 0) # secondary y-axis
 dev.off()
 
 # check if all peaks have good quality, otherweise we need to play with the cut.Area
@@ -97,12 +99,12 @@ V.TM <- sapply(L.MELT, function(x){
 # combine with data frame
 D.TAXON <- cbind(D.TAXON, tm = V.TM)
 
-# Use two.sided welch-test
+# Use two.sided welch-test, because variance is different between the groups
 V.WELCH <- t.test(tm ~ taxon, data = D.TAXON, alterantive = "two.sided")
 print("#####################")
 V.WELCH
 
-# QQ Plots
+# QQ Plots, to check for normality
 qqnorm(D.TAXON$tm[D.TAXON$taxon == "C. luteus"], main = "C. luteus QQ-Plot")
 qqline(D.TAXON$tm[D.TAXON$taxon == "C. luteus"])
 dev.off()
@@ -110,7 +112,7 @@ qqnorm(D.TAXON$tm[D.TAXON$taxon == "C. variegatus"], main = "C. variegatus QQ-Pl
 qqline(D.TAXON$tm[D.TAXON$taxon == "C. variegatus"])
 dev.off()
 
-# Test for norm. distribution
+# Test for norm. distribution, we don't do this because it would increase our number of tests
 #shapiro.test(D.TAXON$tm[D.TAXON$taxon == "C. variegatus"])
 #shapiro.test(D.TAXON$tm[D.TAXON$taxon == "C. luteus"])
 
@@ -155,13 +157,11 @@ P.TM <- ggplot(D.TAXON,
   geom_errorbar(
     data = D.TM, 
     aes(x = taxon, y = mean, ymin = lower, ymax = upper),
-    width = 0.5, color = "black", show.legend = NA
-    ) + 
+    width = 0.5, color = "black", show.legend = NA) + 
   geom_point(
     data = D.TM, 
     aes(x = taxon, y = mean),
-    size = 5, color = "black", show.legend = NA
-  ) +
+    size = 5, color = "black", show.legend = NA) +
   geom_point(show.legend=NA) +
   geom_text(
     data = D.TM, 
@@ -199,6 +199,8 @@ P.DFDT
 ggsave(paste(V.SAVE, "DFDT_Melt.pdf", sep = ""))
 
 # 6. Euclidean Distance ####
+# this analysis was done to be somewhat compareable to the following paper:
+# Everman S, Wang SY. Distinguishing Anuran species by high‐resolution melting analysis of the COI barcode (COI‐HRM). Ecol Evol. 2019;9:13515–13520.
 # Transform for adonis function
 D.TEMP <- D.FT[,c(1,3,9:10)]
 D.WIDE <- pivot_wider(
@@ -206,5 +208,6 @@ D.WIDE <- pivot_wider(
   )
 V.WIDE_SPECIES <- as.factor(D.WIDE$taxon)
 D.VALS <- D.WIDE[,-c(1:2)]
+# Adons Permanova Function with euclidean distance and permutations
 V.PERM <- adonis(D.VALS ~ V.WIDE_SPECIES, method="euclidean", permutations=10000)
 V.PERM
