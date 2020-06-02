@@ -35,4 +35,4 @@ Copyright (c) 2020 Hannes Oberreiter
 
 ## Publications
 
-[![DOI](https://zenodo.org/badge/265545926.svg)](https://zenodo.org/badge/latestdoi/265545926)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3872699.svg)](https://doi.org/10.5281/zenodo.3872699)
